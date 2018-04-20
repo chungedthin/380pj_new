@@ -15,7 +15,7 @@ public class Bidding {
     private String status;
     private String comment;
     private long price;
-    private Map<String, Attachment> attachments = new Hashtable<>();
+    //private Map<String, Attachment> attachments = new Hashtable<>();
 
     public long getId() {
         return id;
@@ -111,7 +111,7 @@ public class Bidding {
 
     public Attachment deleteAttachment(String name) {
         return this.attachments.remove(name);
-    }    
+    }   
 }
 
 
