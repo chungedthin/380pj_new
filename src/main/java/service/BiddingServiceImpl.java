@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import dao.AttachmentRepository;
 import dao.BiddingRepository;
 import exception.AttachmentNotFound;
-import exception.BiddingNotFound;
+import exception.BiddingItemNotFound;
 import model.Attachment;
 import model.Bidding;
 
@@ -24,7 +24,7 @@ public class BiddingServiceImpl implements BiddingService {
 
     @Override
     @Transactional
-    public List<Bidding> getBiddings() {
+    public List<Bidding> getBidding() {
         return biddingRepo.findAll();
     }
 
@@ -35,23 +35,23 @@ public class BiddingServiceImpl implements BiddingService {
     }
 
     @Override
-    @Transactional(rollbackFor = BiddingNotFound.class)
-    public void delete(long id) throws BiddingNotFound {
-        Bidding deletedBidding = biddingRepo.findOne(id);
-        if (deletedBidding == null) {
-            throw new TicketNotFound();
+    @Transactional(rollbackFor = BiddingItemNotFound.class)
+    public void delete(long id) throws BiddingItemNotFound {
+        Bidding deletedBiddingItem = biddingRepo.findOne(id);
+        if (deletedBiddingItem == null) {
+            throw new BiddingItemNotFound();
         }
-        biddingRepo.delete(deletedbidding);
+        biddingRepo.delete(deletedBiddingItem);
     }
 
     @Override
     @Transactional(rollbackFor = AttachmentNotFound.class)
-    public void deleteAttachment(long Id, String name) throws AttachmentNotFound {
-        bidding bidding = biddingRepo.findOne(Id);
-        for (Attachment attachment : ticket.getAttachments()) {
+    public void deleteAttachment(long itemId, String name) throws AttachmentNotFound {
+        Bidding item = biddingRepo.findOne(itemId);
+        for (Attachment attachment : item.getAttachments()) {
             if (attachment.getName().equals(name)) {
-                bidding.deleteAttachment(attachment);
-               biddingRepo.save(bidding);
+                item.deleteAttachment(attachment);
+                biddingRepo.save(item);
                 return;
             }
         }
@@ -60,11 +60,11 @@ public class BiddingServiceImpl implements BiddingService {
 
     @Override
     @Transactional
-    public long createbidding(String ownerName, String itemsubject,
+    public long createBidding(String ownerName, String itemsubject,
             String body, List<MultipartFile> attachments) throws IOException {
         Bidding bidding = new Bidding();
-        bidding.setCustomerName(customerName);
-        bidding.setSubject(subject);
+        bidding.setCustomerName(ownerName);
+        bidding.setSubject(itemsubject);
         bidding.setBody(body);
 
         for (MultipartFile filePart : attachments) {
@@ -76,24 +76,24 @@ public class BiddingServiceImpl implements BiddingService {
             if (attachment.getName() != null && attachment.getName().length() > 0
                     && attachment.getContents() != null
                     && attachment.getContents().length > 0) {
-                ticket.getAttachments().add(attachment);
+                bidding.getAttachments().add(attachment);
             }
         }
-        Bidding savedbidding = biddingRepo.save(bidding);
+        Bidding savedBidding = biddingRepo.save(bidding);
         return savedBidding.getId();
     }
 
     @Override
-    @Transactional(rollbackFor = BiddingNotFound.class)
-    public void updateBidding(long id, String itemsubject,
+    @Transactional(rollbackFor = BiddingItemNotFound.class)
+    public void updateBidding(long id, String subject,
             String body, List<MultipartFile> attachments)
-            throws IOException, TicketNotFound {
-        Ticket updatedTicket = biddingRepo.findOne(id);
-        if (updatedTicket == null) {
-            throw new TicketNotFound();
+            throws IOException, BiddingItemNotFound {
+        Bidding updatedBidding = biddingRepo.findOne(id);
+        if (updatedBidding == null) {
+            throw new BiddingItemNotFound();
         }
 
-        updatedBidding.setSubject(itemsubject);
+        updatedBidding.setSubject(subject);
         updatedBidding.setBody(body);
 
         for (MultipartFile filePart : attachments) {
@@ -108,7 +108,7 @@ public class BiddingServiceImpl implements BiddingService {
                 updatedBidding.getAttachments().add(attachment);
             }
         }
-       biddingRepo.save(updatedBidding);
+        biddingRepo.save(updatedBidding);
     }
 
 }
