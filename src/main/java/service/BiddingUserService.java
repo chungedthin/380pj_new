@@ -18,12 +18,12 @@ import model.UserRole;
 public class BiddingUserService implements UserDetailsService {
 
     @Resource
-    BiddingUserRepository ticketUserRepo;
+    BiddingUserRepository biddingUserRepo;
 
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
-        BiddingUser biddingUser = ticketUserRepo.findOne(username);
+        BiddingUser biddingUser = biddingUserRepo.findOne(username);
         if (biddingUser == null) {
             throw new UsernameNotFoundException("User '" + username + "' not found.");
         }
