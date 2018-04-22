@@ -30,7 +30,7 @@ http://www.springframework.org/schema/security/spring-security.xsd
 </authentication-manager>
 
 <http auto-config="true">
-    <intercept-url pattern="/ticket/**" access="hasAnyRole('USER','ADMIN')" />
+    <intercept-url pattern="/bidding/**" access="hasAnyRole('USER','ADMIN')" />
     <form-login login-page="/login" authentication-failure-url="/login?error" />
     <logout logout-success-url="/login?logout"
             invalidate-session="true"
